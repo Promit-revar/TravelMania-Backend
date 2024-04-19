@@ -5,7 +5,6 @@ router.get('/',(req,res)=>{
     res.send("Hello World!");
 })
 router.post('/hotel_search',async (req,res)=>{
-  console.log(req.body);
     const payload = {
       "user_id": process.env.USER_NAME,
       "user_password": process.env.USER_PASSWORD,
@@ -17,13 +16,13 @@ router.post('/hotel_search',async (req,res)=>{
     res.json(response);
 });
 router.get('/hotelDetails',async (req,res)=>{
-  const params = {...req.params};
+  const params = {...req.query};
   const url = BASE_URL+"hotelDetails";
-  const response = await makeRequest({method: 'GET', url: url, params:{...req.params}});
+  const response = await makeRequest({method: 'GET', url: url, params:{...params}});
   res.json(response);
 });
 router.get('/moreResults', async (req,res)=>{
-  const params = {...req.params};
+  const params = {...req.query};
   const url = BASE_URL+"moreResults";
   const response = await makeRequest({method: 'GET', url: url, params:{...params}});
   res.json(response);
@@ -35,7 +34,7 @@ router.post('/filterResults', async (req,res) => {
   res.json(response);
 });
 router.get('/moreFilterResults', async (req,res) => {
-  const params = {...req.params};
+  const params = {...req.query};
   const url = BASE_URL+"moreFilterResults?";
   const response = await makeRequest({method: 'GET', url: url, params:{...params}});
   res.json(response);
