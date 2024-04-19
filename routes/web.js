@@ -5,6 +5,7 @@ router.get('/',(req,res)=>{
     res.send("Hello World!");
 })
 router.post('/hotel_search',async (req,res)=>{
+  console.log(req.body);
     const payload = {
       "user_id": process.env.USER_NAME,
       "user_password": process.env.USER_PASSWORD,
