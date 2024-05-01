@@ -69,5 +69,29 @@ router.get('/moreFilterResults', async (req,res) => {
     res.json({success: false, error: response.status.error});
   else
     res.json(response);
-})
+});
+router.post('/get_room_rates', async (req,res) => {
+  const payload = {...req.body};
+  const url = BASE_URL+"get_room_rates";
+  const response = await makeRequest({method: 'POST', url: url, body: {...payload}});
+  if(Object.hasOwn(response,'status') && Object.hasOwn(response.status,'error'))
+    res.json({success: false, error: response.status.error});
+  else if(Object.hasOwn(response,'status') && Object.hasOwn(response.status,'errors')){
+      res.status(400).json({sucess: false, error:response.status.errors})
+  }
+  else
+    res.json(response);
+});
+router.post('/get_rate_rules', async(req,res)=>{
+  const payload = {...req.body};
+  const url = BASE_URL+"get_rate_rules";
+  const response = await makeRequest({method: 'POST', url: url, body: {...payload}});
+  if(Object.hasOwn(response,'status') && Object.hasOwn(response.status,'error'))
+    res.json({success: false, error: response.status.error});
+  else if(Object.hasOwn(response,'status') && Object.hasOwn(response.status,'errors')){
+      res.status(400).json({sucess: false, error:response.status.errors})
+  }
+  else
+    res.status(200).json(response);
+});
 module.exports = router;
