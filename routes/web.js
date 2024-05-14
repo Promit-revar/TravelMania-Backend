@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const BASE_URL = "https://travelnext.works/api/hotel_trawexv6/";
 const makeRequest = require('../utils/makeRequest');
+const createStripeSession = require('../utils/stripeConfig');
 router.get('/',(req,res)=>{
     res.send("Hello World!");
 })
@@ -93,5 +94,32 @@ router.post('/get_rate_rules', async(req,res)=>{
   }
   else
     res.status(200).json(response);
+});
+router.post('/create-checkout-seesion', async(req,res) => {
+  try{
+    const payload = {...req.body};
+    // const response = await createStripeSession(payload);
+    res.status(200).json({succes: true, data: response});
+  }catch(err){
+    res.status(500).json({success: false, error: err.message});
+  }
+});
+router.post('/booking', async(req,res)=>{
+  const payload = {...req.body};
+  const url = BASE_URL+"hotel_book";
+  const response = await makeRequest({method: 'POST', url: url, body: {...payload}});
+  if(Object.hasOwn(response,'status') && Object.hasOwn(response.status,'error'))
+    res.json({success: false, error: response.status.error});
+  else if(Object.hasOwn(response,'status') && Object.hasOwn(response.status,'errors')){
+      res.status(400).json({sucess: false, error:response.status.errors})
+  }
+  else{
+    const stripeSession = await createStripeSession({
+      price: response.roomBookDetails.NetPrice,
+      currency: response.roomBookDetails.currency,
+    });
+    res.status(200).json({bookingData: response, stripeSession});
+  }
+    
 });
 module.exports = router;
