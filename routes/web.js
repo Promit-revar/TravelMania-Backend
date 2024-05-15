@@ -105,6 +105,7 @@ router.post('/create-checkout-seesion', async(req,res) => {
   }
 });
 router.post('/booking', async(req,res)=>{
+  try{
   const payload = {...req.body};
   const url = BASE_URL+"hotel_book";
   const response = await makeRequest({method: 'POST', url: url, body: {...payload}});
@@ -120,6 +121,9 @@ router.post('/booking', async(req,res)=>{
     });
     res.status(200).json({bookingData: response, stripeSession});
   }
+}catch(err){
+  res.status(500).json({success: false, error: 'Something went wrong'})
+}
     
 });
 module.exports = router;

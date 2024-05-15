@@ -9,7 +9,7 @@ const createStripeSession = async(items) => {
                 product_data:{
                     name: "Hotel Booking",
                 },
-                unit_amount: items.price * 100,
+                unit_amount: Math.round(Number(items.price) * 100),
             },
             quantity: 1,
             
