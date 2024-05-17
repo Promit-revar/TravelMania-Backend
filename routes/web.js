@@ -141,6 +141,7 @@ router.post('/booking', async(req,res)=>{
     res.status(200).json({bookingData: response, stripeSession});
   }
 }catch(err){
+  console.log(err);
   res.status(500).json({success: false, error: 'Something went wrong'})
 }
     
