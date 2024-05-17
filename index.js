@@ -21,10 +21,12 @@ app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request,
     switch (event.type) {
       case 'payment_intent.requires_action':
         const paymentIntentRequiresAction = event.data.object;
+        console.log(paymentIntentRequiresAction);
         // Then define and call a function to handle the event payment_intent.requires_action
         break;
       case 'payment_intent.succeeded':
         const paymentIntentSucceeded = event.data.object;
+        console.log(paymentIntentSucceeded);
         await sendEmail();
         // Then define and call a function to handle the event payment_intent.succeeded
         break;
