@@ -2,14 +2,14 @@ const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // Use `true` for port 465, `false` for all other ports
+  port: 465,
+  secure: true, // Use `true` for port 465, `false` for all other ports
   auth: {
     user: "promit.revar2211@gmail.com",
     pass: "dolkldofiebtjozw",
   },
 });
-exports = async function sendEmail() {
+module.exports = async function sendEmail() {
     // send mail with defined transport object
     const info = await transporter.sendMail({
       from: '"Maddison Foo Koch 👻" <promit.revar2211@gmail.com>', // sender address
