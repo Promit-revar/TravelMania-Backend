@@ -2,6 +2,7 @@ const router = require('express').Router();
 const BASE_URL = "https://travelnext.works/api/hotel_trawexv6/";
 const makeRequest = require('../utils/makeRequest');
 const createStripeSession = require('../utils/stripeConfig');
+const {sendEmail} = require('../utils/sendMail');
 router.get('/',(req,res)=>{
     res.send("Hello World!");
 })
@@ -104,6 +105,24 @@ router.post('/create-checkout-seesion', async(req,res) => {
     res.status(500).json({success: false, error: err.message});
   }
 });
+router.get('/webhook',async(req,res)=>{
+  let event;
+  switch (event.type) {
+    case 'payment_intent.requires_action':
+      const paymentIntentRequiresAction = event.data.object;
+      console.log({paymentIntentRequiresAction})
+      // Then define and call a function to handle the event payment_intent.requires_action
+      break;
+    case 'payment_intent.succeeded':
+      const paymentIntentSucceeded = event.data.object;
+      console.log({paymentIntentSucceeded})
+      // Then define and call a function to handle the event payment_intent.succeeded
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+})
 router.post('/booking', async(req,res)=>{
   try{
   const payload = {...req.body};
