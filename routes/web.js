@@ -105,7 +105,7 @@ router.post('/create-checkout-seesion', async(req,res) => {
     res.status(500).json({success: false, error: err.message});
   }
 });
-router.get('/webhook',async(req,res)=>{
+router.post('/webhook',async(req,res)=>{
   let event;
   switch (event.type) {
     case 'payment_intent.requires_action':
