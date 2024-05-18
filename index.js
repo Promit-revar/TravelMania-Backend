@@ -9,7 +9,7 @@ app.use(cors());
 app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request, response) => {
     const sig = request.headers['stripe-signature'];
     let event;
-    const endpointSecret = "whsec_31a291a60be2ed797c8d6884a27848f0dc828be87ef1279482c4ee83a077c810";
+    const endpointSecret = "whsec_XUi9G24C6Sd7u91NnE7O8bEESFP5iNR1";
     try {
       event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
     } catch (err) {
