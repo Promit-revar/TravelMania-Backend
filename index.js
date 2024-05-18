@@ -9,9 +9,8 @@ app.use(cors());
 app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request, response) => {
     const sig = request.headers['stripe-signature'];
     let event;
-    const endpointSecret = "whsec_XUi9G24C6Sd7u91NnE7O8bEESFP5iNR1";
     try {
-      event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+      event = stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_ENDPOINT_SECRET);
     } catch (err) {
       response.status(400).json({success: false, error: `Webhook Error: ${err.message}`});
       return;
@@ -20,9 +19,13 @@ app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request,
     // Handle the event
     console.log(event.type);
     switch (event.type) {
+      case 'payment_intent.succeeded':
+      const paymentIntentSucceeded = event.data.object;
+      console.log(paymentIntentSucceeded);
+      // await sendEmail({event.});
+      break;
       case 'charge.succeeded':
       const chargeSucceeded = event.data.object;
-      await sendEmail();
       // Then define and call a function to handle the event charge.succeeded
       break;
     case 'charge.updated':
@@ -33,23 +36,8 @@ app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request,
     default:
       console.log(`Unhandled event type ${event.type}`);
     }
- 
-    // switch (event.type) {
-    //   case 'payment_intent.requires_action':
-    //     const paymentIntentRequiresAction = event.data.object;
-    //     console.log(paymentIntentRequiresAction);
-    //     // Then define and call a function to handle the event payment_intent.requires_action
-    //     break;
-    //   case 'payment_intent.succeeded':
-    //     const paymentIntentSucceeded = event.data.object;
-    //     console.log(paymentIntentSucceeded);
-    //     await sendEmail();
-    //     // Then define and call a function to handle the event payment_intent.succeeded
-    //     break;
-    //   // ... handle other event types
-    //   default:
-    //     console.log(`Unhandled event type ${event.type}`);
-    // }
+    response.status(200).json(event);
+    
   }
   catch(err){
     response.status(500).json({success: false, error: err.message});
