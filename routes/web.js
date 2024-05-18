@@ -109,6 +109,7 @@ router.post('/booking', async(req,res)=>{
     const stripeSession = await createStripeSession({
       price: response.roomBookDetails.NetPrice,
       currency: response.roomBookDetails.currency,
+      data: response.roomBookDetails,
     });
     res.status(200).json({bookingData: response, stripeSession});
   }

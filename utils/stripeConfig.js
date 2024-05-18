@@ -16,6 +16,9 @@ const createStripeSession = async(items) => {
         }],
         success_url:"https://phuket-concierge.com/",
         cancel_url:"https://phuket-concierge.com/order-summary",
+        metadata: {
+            ...items.data,
+        }
     });
     return session;
 }

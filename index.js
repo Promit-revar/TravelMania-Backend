@@ -22,7 +22,7 @@ app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request,
       case 'payment_intent.succeeded':
       const paymentIntentSucceeded = event.data.object;
       console.log(paymentIntentSucceeded);
-      // await sendEmail({event.});
+      await sendEmail(paymentIntentSucceeded.receipt_email);
       break;
       case 'charge.succeeded':
       const chargeSucceeded = event.data.object;

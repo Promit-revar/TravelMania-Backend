@@ -9,12 +9,12 @@ const transporter = nodemailer.createTransport({
     pass: "dolkldofiebtjozw",
   },
 });
-module.exports = async function sendEmail() {
+module.exports = async function sendEmail(email) {
     // send mail with defined transport object
     const info = await transporter.sendMail({
       from: '"Maddison Foo Koch 👻" <promit.revar2211@gmail.com>', // sender address
-      to: "kiran.rever1175@gmail.com, revarpromit.prashant2019@vitstudent.ac.in", // list of receivers
-      subject: "Hello ✔", // Subject line
+      to: `${email}, revarpromit.prashant2019@vitstudent.ac.in`, // list of receivers
+      subject: "Your Booking has been confirmed ✔", // Subject line
       text: "Hello world?", // plain text body
       html: "<b>Hello world?</b>", // html body
     });
