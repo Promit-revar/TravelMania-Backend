@@ -1,5 +1,5 @@
 const axios = require('axios');
-const makeRequest = async({method, body={}, url, headers={ "Content-Type":false, "X-Forwarded-For":"185.137.122.196"}, ...defaultConfig}) => {
+const makeRequest = async({method, body={}, url, headers={ "Content-Type":false}, ...defaultConfig}) => {
     try{
     const response = await axios({
         method: method,
