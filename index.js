@@ -19,10 +19,15 @@ app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request,
     // Handle the event
     console.log(event.type);
     switch (event.type) {
+      case 'checkout.session.completed':
+      const checkoutSessionCompleted = event.data.object;
+      console.log(checkoutSessionCompleted);
+      // await sendEmail(paymentIntentSucceeded.receipt_email);
+      break;
       case 'payment_intent.succeeded':
       const paymentIntentSucceeded = event.data.object;
       console.log(paymentIntentSucceeded);
-      await sendEmail(paymentIntentSucceeded.receipt_email);
+      
       break;
       case 'charge.succeeded':
       const chargeSucceeded = event.data.object;
