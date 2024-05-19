@@ -10,7 +10,7 @@ app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request,
     const sig = request.headers['stripe-signature'];
     let event;
     try {
-      event = stripe.webhooks.constructEvent(request.body, sig, 'whsec_31a291a60be2ed797c8d6884a27848f0dc828be87ef1279482c4ee83a077c810');
+      event = stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_ENDPOINT_SECRET);
     } catch (err) {
       console.log(err.message);
       response.status(400).json({success: false, error: `Webhook Error: ${err.message}`});
