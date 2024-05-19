@@ -10,24 +10,24 @@ app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request,
     const sig = request.headers['stripe-signature'];
     let event;
     try {
-      event = stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_ENDPOINT_SECRET);
+      event = stripe.webhooks.constructEvent(request.body, sig, 'whsec_31a291a60be2ed797c8d6884a27848f0dc828be87ef1279482c4ee83a077c810');
     } catch (err) {
+      console.log(err.message);
       response.status(400).json({success: false, error: `Webhook Error: ${err.message}`});
       return;
     }
     try{
     // Handle the event
-    console.log(event.type);
     switch (event.type) {
       case 'checkout.session.completed':
       const checkoutSessionCompleted = event.data.object;
-      console.log(checkoutSessionCompleted);
+      if(checkoutSessionCompleted.payment_status === 'paid'){
+        await sendEmail({email: checkoutSessionCompleted.customer_details.email, name: checkoutSessionCompleted.customer_details.name, bookingData: JSON.parse(checkoutSessionCompleted.metadata.data)})
+      }
       // await sendEmail(paymentIntentSucceeded.receipt_email);
       break;
       case 'payment_intent.succeeded':
       const paymentIntentSucceeded = event.data.object;
-      console.log(paymentIntentSucceeded);
-      
       break;
       case 'charge.succeeded':
       const chargeSucceeded = event.data.object;
