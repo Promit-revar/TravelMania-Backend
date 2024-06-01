@@ -179,11 +179,11 @@ router.post("/booking", async (req, res) => {
     ) {
       res.status(400).json({ sucess: false, error: response.status.errors });
     } else {
-      // console.log(req.body)
+      const geoData = req.body.geoData;
       const stripeSession = await createStripeSession({
         price: response.roomBookDetails.NetPrice,
         currency: response.roomBookDetails.currency,
-        data: {checkIn: response.roomBookDetails.checkIn, checkOut: response.roomBookDetails.checkOut, refNo: response.referenceNum, cancellationPolicy: response.roomBookDetails.cancellationPolic, rooms: response.roomBookDetails.rooms, email: response.roomBookDetails.customerEmail, lat: req.body.geoData.lat, long: req.body.geodata.long},
+        data: {checkIn: response.roomBookDetails.checkIn, checkOut: response.roomBookDetails.checkOut, refNo: response.referenceNum, cancellationPolicy: response.roomBookDetails.cancellationPolicy, rooms: response.roomBookDetails.rooms, email: response.roomBookDetails.customerEmail, ...geoData},
       });
       res.status(200).json({ bookingData: response, stripeSession });
     }
