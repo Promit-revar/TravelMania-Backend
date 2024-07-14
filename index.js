@@ -21,8 +21,15 @@ app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request,
     switch (event.type) {
       case 'checkout.session.completed':
       const checkoutSessionCompleted = event.data.object;
+      const url = "https://travelnext.works/api/hotel_trawexv6/hotel_book";
+      const response = await makeRequest({
+        method: "POST",
+        url: url,
+        body: { ...payload },
+      });
+      console.log({response});
       if(checkoutSessionCompleted.payment_status === 'paid'){
-        await sendEmail({email: checkoutSessionCompleted.customer_details.email, name: checkoutSessionCompleted.customer_details.name, bookingData: JSON.parse(checkoutSessionCompleted.metadata.data)})
+        await sendEmail({email: checkoutSessionCompleted.customer_details.email, name: checkoutSessionCompleted.customer_details.name, bookingData: response})
       }
       // await sendEmail(paymentIntentSucceeded.receipt_email);
       break;

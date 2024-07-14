@@ -14,11 +14,11 @@ const createStripeSession = async(items) => {
             quantity: 1,
             
         }],
-        success_url:"https://phuket-concierge.com/",
+        success_url:"https://phuket-concierge.com?success=true",
         cancel_url:"https://phuket-concierge.com/order-summary",
-        metadata: {
-            data: JSON.stringify(items.data),
-        }
+        // metadata: {
+        //     data: JSON.stringify(items.data),
+        // }
     });
     return session;
 }

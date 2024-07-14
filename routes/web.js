@@ -162,31 +162,23 @@ router.post("/get_rate_rules", async (req, res) => {
 router.post("/booking", async (req, res) => {
   try {
     const payload = { ...req.body.requestData };
-    const url = BASE_URL + "hotel_book";
-    const response = await makeRequest({
-      method: "POST",
-      url: url,
-      body: { ...payload },
-    });
-    if (
-      Object.hasOwn(response, "status") &&
-      Object.hasOwn(response.status, "error")
-    )
-      res.json({ success: false, error: response.status.error });
-    else if (
-      Object.hasOwn(response, "status") &&
-      Object.hasOwn(response.status, "errors")
-    ) {
-      res.status(400).json({ sucess: false, error: response.status.errors });
-    } else {
-      const geoData = req.body.geoData;
-      const stripeSession = await createStripeSession({
-        price: response.roomBookDetails.NetPrice,
-        currency: response.roomBookDetails.currency,
-        data: {checkIn: response.roomBookDetails.checkIn, checkOut: response.roomBookDetails.checkOut, refNo: response.referenceNum, cancellationPolicy: response.roomBookDetails.cancellationPolicy, rooms: response.roomBookDetails.rooms, email: response.roomBookDetails.customerEmail, ...geoData},
+    const {sessionId, productId, tokenId, rateBasisId} = payload;
+    const rateURL = BASE_URL + "get_rate_rules";
+  const getPrice= await makeRequest({
+    method: "POST",
+    url: rateURL,
+    body: {sessionId, productId, tokenId, rateBasisId},
+  });
+    // const response = await makeRequest({
+    //   method: "POST",
+    //   url: url,
+    //   body: { ...payload },
+    // });
+    const stripeSession = await createStripeSession({
+        price: getPrice.roomRates.perBookingRates[0].netPrice,
+        currency: getPrice.roomRates.perBookingRates[0].currency,
       });
-      res.status(200).json({ bookingData: response, stripeSession });
-    }
+    res.status(200).json({ stripeSession });
   } catch (err) {
     console.log(err);
     res.status(500).json({ success: false, error: "Something went wrong" });
