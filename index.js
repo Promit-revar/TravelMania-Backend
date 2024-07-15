@@ -29,7 +29,7 @@ app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request,
       });
       console.log({response});
       if(checkoutSessionCompleted.payment_status === 'paid'){
-        await sendEmail({email: checkoutSessionCompleted.customer_details.email, name: checkoutSessionCompleted.customer_details.name, bookingData: response})
+        await sendEmail({email: checkoutSessionCompleted.customer_details.email, name: checkoutSessionCompleted.customer_details.name, bookingData: {...response,geoData: JSON.parse(checkoutSessionCompleted.metadata.data)}})
       }
       // await sendEmail(paymentIntentSucceeded.receipt_email);
       break;

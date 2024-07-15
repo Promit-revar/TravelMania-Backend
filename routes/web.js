@@ -174,9 +174,11 @@ router.post("/booking", async (req, res) => {
     //   url: url,
     //   body: { ...payload },
     // });
+    const geoData = req.body.geoData;
     const stripeSession = await createStripeSession({
         price: getPrice.roomRates.perBookingRates[0].netPrice,
         currency: getPrice.roomRates.perBookingRates[0].currency,
+        data: geoData,
       });
     res.status(200).json({ stripeSession });
   } catch (err) {
