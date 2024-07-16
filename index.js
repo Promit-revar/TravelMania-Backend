@@ -10,7 +10,7 @@ app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request,
     const sig = request.headers['stripe-signature'];
     let event;
     try {
-      event = stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_ENDPOINT_SECRET);
+      event = stripe.webhooks.constructEvent(request.body, sig, 'whsec_31a291a60be2ed797c8d6884a27848f0dc828be87ef1279482c4ee83a077c810');
     } catch (err) {
       console.log(err.message);
       response.status(400).json({success: false, error: `Webhook Error: ${err.message}`});
@@ -18,18 +18,14 @@ app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request,
     }
     try{
     // Handle the event
+    // const payload = JSON.parse(checkoutSessionCompleted.metadata.data);
+    // console.log(payload);
     switch (event.type) {
       case 'checkout.session.completed':
       const checkoutSessionCompleted = event.data.object;
-      const url = "https://travelnext.works/api/hotel_trawexv6/hotel_book";
-      const response = await makeRequest({
-        method: "POST",
-        url: url,
-        body: { ...payload },
-      });
-      console.log({response});
+      const bookingResponse = await router.makeBooking();
       if(checkoutSessionCompleted.payment_status === 'paid'){
-        await sendEmail({email: checkoutSessionCompleted.customer_details.email, name: checkoutSessionCompleted.customer_details.name, bookingData: {...response,geoData: JSON.parse(checkoutSessionCompleted.metadata.data)}})
+        await sendEmail({email: checkoutSessionCompleted.customer_details.email, name: checkoutSessionCompleted.customer_details.name, bookingData: {...bookingResponse, geoData: JSON.parse(checkoutSessionCompleted.metadata.data)}})
       }
       // await sendEmail(paymentIntentSucceeded.receipt_email);
       break;
@@ -56,7 +52,7 @@ app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request,
   }
   });
 app.use(express.json());
-app.use('/api',router);
+app.use('/api',router.router);
 
 const port = process.env.PORT || 8000;
 app.listen(port,()=>console.log(`server running on port: ${port}`));

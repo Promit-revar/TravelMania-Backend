@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const BASE_URL = "https://travelnext.works/api/hotel_trawexv6/";
 const makeRequest = require("../utils/makeRequest");
 const createStripeSession = require("../utils/stripeConfig");
+const NodeCache = require( "node-cache" );
+const cacheStore = new NodeCache();
 router.get("/", (req, res) => {
   res.send("Hello World!");
 });
@@ -169,6 +171,7 @@ router.post("/booking", async (req, res) => {
     url: rateURL,
     body: {sessionId, productId, tokenId, rateBasisId},
   });
+  cacheStore.set('payload',payload,Number.MAX_SAFE_INTEGER);
     // const response = await makeRequest({
     //   method: "POST",
     //   url: url,
@@ -186,4 +189,13 @@ router.post("/booking", async (req, res) => {
     res.status(500).json({ success: false, error: "Something went wrong" });
   }
 });
-module.exports = router;
+const makeBooking = async() => {
+  const payload = cacheStore.get('payload');
+  const url = BASE_URL+"hotel_book";
+  return await makeRequest({
+    method: "POST",
+    url: url,
+    body: { ...payload },
+  });
+}
+module.exports = {router, makeBooking};

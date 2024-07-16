@@ -12,7 +12,6 @@ const transporter = nodemailer.createTransport({
 });
 module.exports = async function sendEmail({email, name, bookingData}) {
     // send mail with defined transport object
-    console.log({bookingData})
     const info = await transporter.sendMail(emailTemplate({email,name, bookingData}));
     console.log("Message sent: %s", info.messageId);
     // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
