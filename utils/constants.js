@@ -3,7 +3,7 @@ module.exports = emailTemplate = ({email, name, bookingData}) => ({
     to: `${bookingData.roomBookDetails.customerEmail}, ${process.env.ADMIN_EMAIL_ID}`, // list of receivers
     subject: "Your Booking has been confirmed ✔", // Subject line
     text: "Hello", // plain text body
-    html: `<b>Greetings</b>&nbsp; Mr. ${name},<br><br>
+    html: `<b>Greetings</b>,<br><br>
             We are glad to inform you that your booking is confirmed!!<br>
             <h2>Booking Details</h2>
             <ul>

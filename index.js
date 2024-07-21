@@ -22,11 +22,11 @@ app.post('/api/webhook',express.raw({ type: 'application/json' }),async(request,
     // console.log(payload);
     switch (event.type) {
       case 'checkout.session.completed':
-      const checkoutSessionCompleted = event.data.object;
-      const bookingResponse = await router.makeBooking();
-      if(checkoutSessionCompleted.payment_status === 'paid'){
-        await sendEmail({email: checkoutSessionCompleted.customer_details.email, name: checkoutSessionCompleted.customer_details.name, bookingData: {...bookingResponse, geoData: JSON.parse(checkoutSessionCompleted.metadata.data)}})
-      }
+      // const checkoutSessionCompleted = event.data.object;
+      // const bookingResponse = await router.makeBooking();
+      // if(checkoutSessionCompleted.payment_status === 'paid'){
+      //   await sendEmail({email: checkoutSessionCompleted.customer_details.email, name: checkoutSessionCompleted.customer_details.name, bookingData: {...bookingResponse, geoData: JSON.parse(checkoutSessionCompleted.metadata.data)}})
+      // }
       // await sendEmail(paymentIntentSucceeded.receipt_email);
       break;
       case 'payment_intent.succeeded':

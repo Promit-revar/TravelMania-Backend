@@ -10,9 +10,9 @@ const transporter = nodemailer.createTransport({
     pass: process.env.ADMIN_EMAIL_APP_PASSWORD,
   },
 });
-module.exports = async function sendEmail({email, name, bookingData}) {
+module.exports = async function sendEmail({email, bookingData}) {
     // send mail with defined transport object
-    const info = await transporter.sendMail(emailTemplate({email,name, bookingData}));
+    const info = await transporter.sendMail(emailTemplate({email, bookingData}));
     console.log("Message sent: %s", info.messageId);
     // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
   }

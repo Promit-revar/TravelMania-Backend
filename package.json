@@ -17,6 +17,7 @@
     "jsonwebtoken": "^9.0.2",
     "node-cache": "^5.1.2",
     "nodemailer": "^6.9.13",
+    "puppeteer": "^22.13.1",
     "stripe": "^15.5.0"
   },
   "devDependencies": {

@@ -3,7 +3,9 @@ const jwt = require("jsonwebtoken");
 const BASE_URL = "https://travelnext.works/api/hotel_trawexv6/";
 const makeRequest = require("../utils/makeRequest");
 const createStripeSession = require("../utils/stripeConfig");
+const sendEmail = require('../utils/sendMail');
 const NodeCache = require( "node-cache" );
+const puppeteer = require('puppeteer');
 const cacheStore = new NodeCache();
 router.get("/", (req, res) => {
   res.send("Hello World!");
@@ -171,13 +173,14 @@ router.post("/booking", async (req, res) => {
     url: rateURL,
     body: {sessionId, productId, tokenId, rateBasisId},
   });
-  cacheStore.set('payload',payload,Number.MAX_SAFE_INTEGER);
+  const geoData = req.body.geoData;
+  const hotelName = req.body.hotelName;
+  cacheStore.set('payload',{...payload,geoData, hotelName});
     // const response = await makeRequest({
     //   method: "POST",
     //   url: url,
     //   body: { ...payload },
     // });
-    const geoData = req.body.geoData;
     const stripeSession = await createStripeSession({
         price: getPrice.roomRates.perBookingRates[0].netPrice,
         currency: getPrice.roomRates.perBookingRates[0].currency,
@@ -189,8 +192,21 @@ router.post("/booking", async (req, res) => {
     res.status(500).json({ success: false, error: "Something went wrong" });
   }
 });
-const makeBooking = async() => {
-  const payload = cacheStore.get('payload');
+router.get('/booking-confirmation',async(req,res)=>{
+    try{
+      const payload = cacheStore.get('payload');
+      if(!payload) throw new Error('Operation Not Permitted');
+      const response = await makeBooking(payload);
+      if(response){
+        // cacheStore.del('payload');
+        await sendEmail({email: response.roomBookDetails.customerEmail, bookingData: {...response, geoData: payload.geoData}});
+      }
+      res.status(201).json({...response, geoData: payload.geoData, hotelName: payload.hotelName});
+    }catch(err){
+      res.status(500).json({success: false, error: err.message});
+    }
+});
+const makeBooking = async(payload) => {
   const url = BASE_URL+"hotel_book";
   return await makeRequest({
     method: "POST",
@@ -198,4 +214,29 @@ const makeBooking = async() => {
     body: { ...payload },
   });
 }
+router.post('/generate-pdf', async (req, res) => {
+  const { htmlContent } = req.body;
+
+  if (!htmlContent) {
+      return res.status(400).send('HTML content is required');
+  }
+
+  try {
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      
+      await page.setContent(htmlContent);
+      const pdfBuffer = await page.pdf({ format: 'A4' });
+      await page.pdf({
+        printBackground: true
+    })
+      await browser.close();
+
+      res.type('application/pdf');
+      res.send(pdfBuffer);
+  } catch (error) {
+      console.error('Error generating PDF:', error);
+      res.status(500).send('Error generating PDF');
+  }
+});
 module.exports = {router, makeBooking};
