@@ -198,7 +198,7 @@ router.get('/booking-confirmation',async(req,res)=>{
       if(!payload) throw new Error('Operation Not Permitted');
       const response = await makeBooking(payload);
       if(response){
-        // cacheStore.del('payload');
+        cacheStore.del('payload');
         await sendEmail({email: response.roomBookDetails.customerEmail, bookingData: {...response, geoData: payload.geoData}});
       }
       res.status(201).json({...response, geoData: payload.geoData, hotelName: payload.hotelName});
