@@ -224,6 +224,7 @@ router.post('/generate-pdf', async (req, res) => {
   try {
       const browser = await puppeteer.launch({
         executablePath: '/usr/bin/chromium-browser',
+        args: [ '--disable-gpu', '--disable-setuid-sandbox', '--no-sandbox', '--no-zygote' ],
       });
       const page = await browser.newPage();
       
