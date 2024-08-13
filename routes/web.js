@@ -199,7 +199,7 @@ router.get('/booking-confirmation',async(req,res)=>{
       const response = await makeBooking(payload);
       if(response){
         cacheStore.del('payload');
-        await sendEmail({email: response.roomBookDetails.customerEmail, bookingData: {...response, geoData: payload.geoData}});
+        await sendEmail({email: response.roomBookDetails.customerEmail, bookingData: {...response, geoData: payload.geoData, hotelName: payload.hotelName}});
       }
       res.status(201).json({...response, geoData: payload.geoData, hotelName: payload.hotelName});
     }catch(err){
@@ -222,19 +222,20 @@ router.post('/generate-pdf', async (req, res) => {
   }
 
   try {
-      const browser = await puppeteer.launch({
-        executablePath: '/usr/bin/chromium-browser',
-        args: [ '--disable-gpu', '--disable-setuid-sandbox', '--no-sandbox', '--no-zygote' ],
-      });
-      const page = await browser.newPage();
+    //   const browser = await puppeteer.launch({
+    //     executablePath: '/usr/bin/chromium-browser',
+    //     args: [ '--disable-gpu', '--disable-setuid-sandbox', '--no-sandbox', '--no-zygote' ],
+    //   });
+    //   const page = await browser.newPage();
       
-      await page.setContent(htmlContent);
-      const pdfBuffer = await page.pdf({ format: 'A4' });
-      await page.pdf({
-        printBackground: true
-    })
-      await browser.close();
-
+    //   await page.setContent(htmlContent);
+    //   await page.pdf({
+    //     printBackground: true
+    // })
+    //   const pdfBuffer = await page.pdf({ format: 'A4' });
+      
+    //   await browser.close();
+      const pdfBuffer = await generatePDF(htmlContent);
       res.type('application/pdf');
       res.send(pdfBuffer);
   } catch (error) {
@@ -242,4 +243,20 @@ router.post('/generate-pdf', async (req, res) => {
       res.status(500).send('Error generating PDF');
   }
 });
+const generatePDF = async(htmlContent) => {
+    const browser = await puppeteer.launch({
+      executablePath: '/usr/bin/chromium-browser',
+      args: [ '--disable-gpu', '--disable-setuid-sandbox', '--no-sandbox', '--no-zygote' ],
+    });
+    const page = await browser.newPage();
+    
+    await page.setContent(htmlContent);
+    await page.pdf({
+      printBackground: true
+  })
+    const pdfBuffer = await page.pdf({ format: 'A4' });
+    
+    await browser.close();
+    return pdfBuffer;
+}
 module.exports = {router, makeBooking};

@@ -14,8 +14,8 @@ const createStripeSession = async(items) => {
             quantity: 1,
             
         }],
-        success_url:"http://phuket-concierge.com/booking-confirmation",
-        cancel_url:"https://phuket-concierge.com/order-summary",
+        success_url:"https://phuket-concierge.com/booking-confirmation",
+        cancel_url:"https://phuket-concierge.com",
         metadata: {
             data: JSON.stringify(items.data),
         }

@@ -4,7 +4,7 @@ module.exports = emailTemplate = ({email, name, bookingData}) => ({
     subject: "Your Booking has been confirmed ✔", // Subject line
     text: "Hello", // plain text body
     html: `<b>Greetings</b>,<br><br>
-            We are glad to inform you that your booking is confirmed!!<br>
+            We are glad to inform you that we confirmed your booking with <b>${bookingData.hotelName}</b>!!<br>
             <h2>Booking Details</h2>
             <ul>
                 <li> <b>Check-in : ${bookingData.roomBookDetails.checkIn} </b> </li>
