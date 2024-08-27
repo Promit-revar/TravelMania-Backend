@@ -223,19 +223,7 @@ router.post('/generate-pdf', async (req, res) => {
   }
 
   try {
-      const browser = await puppeteer.launch({
-        executablePath: '/usr/bin/chromium-browser',
-        args: [ '--disable-gpu', '--disable-setuid-sandbox', '--no-sandbox', '--no-zygote' ],
-      });
-      const page = await browser.newPage();
-      
-      await page.setContent(htmlContent);
-      await page.pdf({
-        printBackground: true
-    })
-      const pdfBuffer = await page.pdf({ format: 'A4' });
-      
-      await browser.close();
+      const pdfBuffer = await generatePDF(htmlContent);
       res.type('application/pdf');
       res.send(pdfBuffer);
   } catch (error) {
