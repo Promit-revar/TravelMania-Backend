@@ -16,6 +16,7 @@ router.post("/hotel_search", async (req, res) => {
     user_password: process.env.USER_PASSWORD,
     ip_address: process.env.IP_ADDRESS,
     maxResult: Number.MAX_SAFE_INTEGER,
+    access: process.env.API_ACCESS,
     ...req.body,
   };
   const url = BASE_URL + "hotel_search";
