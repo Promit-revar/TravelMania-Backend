@@ -1,12 +1,12 @@
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
-const BASE_URL = "https://travelnext.works/api/hotel_trawexv6/";
 const makeRequest = require("../utils/makeRequest");
 const createStripeSession = require("../utils/stripeConfig");
 const sendEmail = require('../utils/sendMail');
 const NodeCache = require( "node-cache" );
 const puppeteer = require('puppeteer');
 const cacheStore = new NodeCache();
+const BASE_URL = process.env.BASE_URL;
 router.get("/", (req, res) => {
   res.send("Hello World!");
 });
@@ -222,20 +222,19 @@ router.post('/generate-pdf', async (req, res) => {
   }
 
   try {
-    //   const browser = await puppeteer.launch({
-    //     executablePath: '/usr/bin/chromium-browser',
-    //     args: [ '--disable-gpu', '--disable-setuid-sandbox', '--no-sandbox', '--no-zygote' ],
-    //   });
-    //   const page = await browser.newPage();
+      const browser = await puppeteer.launch({
+        executablePath: '/usr/bin/chromium-browser',
+        args: [ '--disable-gpu', '--disable-setuid-sandbox', '--no-sandbox', '--no-zygote' ],
+      });
+      const page = await browser.newPage();
       
-    //   await page.setContent(htmlContent);
-    //   await page.pdf({
-    //     printBackground: true
-    // })
-    //   const pdfBuffer = await page.pdf({ format: 'A4' });
+      await page.setContent(htmlContent);
+      await page.pdf({
+        printBackground: true
+    })
+      const pdfBuffer = await page.pdf({ format: 'A4' });
       
-    //   await browser.close();
-      const pdfBuffer = await generatePDF(htmlContent);
+      await browser.close();
       res.type('application/pdf');
       res.send(pdfBuffer);
   } catch (error) {
